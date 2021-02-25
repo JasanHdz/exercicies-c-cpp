@@ -12,6 +12,7 @@ class Casino {
     int balance;
     int betAmount;
     int selectNumber;
+    int crupierBalance;
     string name;
     void showMenu();
     void toBet();
@@ -23,15 +24,20 @@ class Casino {
   public:
     void runGame();
     int getBalance();
-    Casino(int);
+    int getCrupierBalance();
+    Casino(int, int);
 };
 
 int Casino::getBalance() {
   return this->balance;
 }
+int Casino::getCrupierBalance() {
+  return this->crupierBalance;
+}
 
-Casino::Casino(int balance) {
+Casino::Casino(int balance, int crupierBalance) {
   this->balance = balance;
+  this->crupierBalance = crupierBalance;
 }
 
 bool Casino::setBetAmount(int betAmount) {
@@ -69,38 +75,45 @@ int Casino::rollDice(int from, int to) {
 void Casino::compareNumbers(int randomNumber) {
   if(randomNumber == this->selectNumber) {
     this->balance = this->balance + this->betAmount;
+    this->crupierBalance = this->crupierBalance - this->betAmount;
     cout << "Felicidades a GANADO " << this->betAmount << " PESOS MX :) \n";
     cout << "El número aletorio es " << randomNumber << " y el número selecionado es: " << this->selectNumber << "\n";
     cout << "Su saldo actual ahora es de $" << this->balance << " PESOS MX \n";
+    cout << "El saldo de CRUPIER ahora es de $" << this->crupierBalance << " PESOS MX \n";
   } else if(randomNumber % 2 != 0 && this->selectNumber % 2 != 0) {
     cout << "Golpe de SUERTE :) \n";
     cout << "El número aletorio es " << randomNumber << " y el número selecionado es: " << this->selectNumber;
-    cout << "\nAmbos Números son IMPARES por lo tanto estó es un EMPATA \n";
+    cout << "\nAmbos Números son IMPARES por lo tanto estó es un EMPATE \n";
   } else if(randomNumber % 2 == 0 && this->selectNumber % 2 == 0) {
     cout << "Golpe de SUERTE :) \n";
     cout << "El número aletorio es " << randomNumber << " y el número selecionado es: " << this->selectNumber;
-    cout << "\nAmbos Números son PARES por lo tanto estó es un EMPATA \n";
+    cout << "\nAmbos Números son PARES por lo tanto estó es un EMPATE \n";
   } else {
     this->balance = this->balance - this->betAmount;
+    this->crupierBalance = this->crupierBalance + this->betAmount;
     cout << "Upps: :( No tuvó suerte en esté tiro \n";
     cout << "El número aletorio es " << randomNumber << " y el número selecionado es: " << this->selectNumber << " \n";
     cout << this->name << " usted acaba de perder " << this->betAmount << " PESOS MX \n";
     cout << "Su saldo actual ahora es de $" << this->balance << " PESOS MX \n";
+    cout << "El saldo de CRUPIER ahora es de $" << this->crupierBalance << " PESOS MX \n";
   }
 }
 
 void Casino::showMenu() {
-  cout << ":::: Bienvenido al Casino " << this->name <<  " :::: \n\n";
+  cout << "*******************************************************************************************\n";
+  cout << ":::::::::::::::: Bienvenido al Casino " << this->name <<  " :::::::::::::::: \n\n";
   cout << "Descripción del Juego: \n";
-  cout << "Se Tira un dado entre 1 y 6 y usted deberá adivinar que número cayo \n\n";
+  cout << "Se Tira un dado entre 1 y 6 y usted deberá adivinar que número cayo. \n\n";
   cout << "**Reglas** \n";
-  cout << "1. Usted tiene la cantidad inicial de " << this->balance << " PESOS MX \n";
-  cout << "2. Usted es capaz de apostar una cantidad que no sea 0 y tampoco sea mayor a su saldo actual \n";
-  cout << "3. Si usted le atina al número que cayó usted GANA \n";
-  cout << "4. Si el número que escribió es IMPAR y el número que cayó es IMPAR, se considerará EMPATE \n";
-  cout << "5. Si el número que escribió es PAR y el número que cayó es PAR, se considerará EMPATE \n";
-  cout << "6. Si usted no le atina al número que cayo pierde su apuesta \n";
-  cout << "7. El juego terminará cuando su saldo esté en 0 \n";
+  cout << "1. Usted tiene la cantidad inicial de " << this->balance << " PESOS MX. \n";
+  cout << "2. El CRUPIER tiene un saldo de: " << this->crupierBalance << " PESOS MX. \n";
+  cout << "3. Usted es capaz de apostar una cantidad que no sea 0 y tampoco sea mayor a su saldo actual. \n";
+  cout << "4. Si usted le atina al número que cayó usted GANA Y CRUPIER le pagá su apuesta. \n";
+  cout << "5. Si el número que escribió es IMPAR y el número que cayó es IMPAR, se considerará EMPATE. \n";
+  cout << "6. Si el número que escribió es PAR y el número que cayó es PAR, se considerará EMPATE. \n";
+  cout << "7. Si usted no le atina al número que cayo pierde su apuesta y el CRUPIER la gana. \n";
+  cout << "8. El juego terminará cuando su saldo esté en 0 o el saldo del CRUPIER sea 0. \n";
+  cout << "*******************************************************************************************\n";
 }
 
 void Casino::toBet() {
@@ -128,7 +141,7 @@ void Casino::runGame() {
   cout << "Escribe tu nombre antes de comenzar: ";
   getline(cin, this->name);
   this->showMenu();
-  while (this->getBalance()) {
+  while (this->getBalance() && this->getCrupierBalance()) {
     this->toBet();
     this->chooseNumber();
     int random = this->rollDice(1, 6);
@@ -139,7 +152,7 @@ void Casino::runGame() {
 
 int main() {
   setlocale(LC_ALL, "");
-  Casino casino = Casino(500);
+  Casino casino = Casino(500, 1000);
   casino.runGame();
   system("pause");
   return 0;
